@@ -1,9 +1,10 @@
 "use strict";
 
-const tiles = document.querySelectorAll(".tile");
+const tiles = Array.from(document.querySelectorAll(".tile"));
 const width = 10;
 let timerId = null;
 
+//////////////////////// TETROMINOES ////////////////////////
 const tetromino1 = [
   [0, 1, 2, width + 2],
   [1, width + 1, width * 2, width * 2 + 1],
@@ -48,10 +49,12 @@ const tetrominoes = [
   tetromino5,
 ];
 
+//////////////////////// GAME STATES ////////////////////////
 let currentPos = 4;
 let currentRotation = 0;
 let currentTetromino = tetrominoes[randomNum][currentRotation];
 
+//////////////////////// FUNCTIONS ////////////////////////
 function draw() {
   currentTetromino.forEach((index) => {
     tiles[currentPos + index].classList.add("active");
@@ -62,6 +65,18 @@ function undraw() {
   currentTetromino.forEach((index) => {
     tiles[currentPos + index].classList.remove("active");
   });
+}
+
+function isAtRightWall() {
+  return tiles.some(
+    (tile, index) => tile.classList.contains("active") && index % 10 === 9
+  );
+}
+
+function isAtLeftWall() {
+  return tiles.some(
+    (tile, index) => tile.classList.contains("active") && index % 10 === 0
+  );
 }
 
 function rotate() {
@@ -78,9 +93,31 @@ function rotate() {
   draw();
 }
 
+function moveRight() {
+  if (!isAtRightWall()) {
+    undraw();
+    currentPos++;
+    draw();
+  }
+}
+
+function moveLeft() {
+  if (!isAtLeftWall()) {
+    undraw();
+    currentPos--;
+    draw();
+  }
+}
+
 function control(e) {
+  if (e.keyCode === 37) {
+    moveLeft();
+  }
   if (e.keyCode === 38) {
     rotate();
+  }
+  if (e.keyCode === 39) {
+    moveRight();
   }
 }
 
